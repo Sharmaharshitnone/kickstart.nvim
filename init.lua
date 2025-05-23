@@ -106,6 +106,16 @@ vim.o.number = true
 vim.o.relativenumber = true
 
 
+
+-- Add Alt + f as open foles
+vim.keymap.set('n', '<A-f>', ':Ex<CR>', { desc = 'Open file explorer' })
+
+-- Add Ctrl+S to save
+vim.keymap.set({ 'n' }, '<C-s>', '<cmd>w<cr>', { desc = 'Save file' })
+
+-- Add alt + q to quit
+vim.keymap.set('n', '<A-q>', '<cmd>q<cr>', {desc = 'Quit'})
+
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
 
