@@ -8,4 +8,5 @@ return {
   { import = "custom.plugins.copilot-chat" },
   { import = "custom.plugins.tab_keymaps" },
   { import = "custom.plugins.code_runner" },
+  { import = "custom.plugins.sniprun" },
 }

@@ -105,7 +105,9 @@ vim.o.number = true
 
 vim.o.relativenumber = true
 
-
+-- Add keymaps for vertical and horizontal splits
+vim.keymap.set('n', '<A-v>', ':vsplit<CR>', { desc = 'Split vertically' })
+vim.keymap.set('n', '<A-h>', ':split<CR>', { desc = 'Split horizontally' })
 
 -- Add Alt + f as open foles
 vim.keymap.set('n', '<A-f>', ':Ex<CR>', { desc = 'Open file explorer' })
