@@ -93,6 +93,8 @@ vim.opt.relativenumber = true
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+-- For init.lua
+vim.opt.termguicolors = true
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
@@ -178,6 +180,8 @@ vim.keymap.set('n', '<M-e>', '<cmd>Ex<CR>')
 vim.keymap.set('n', '<M-Q>', '<cmd>q!<CR>')
 vim.keymap.set('n', '<M-W>', '<cmd>wq<CR>')
 vim.keymap.set('n', '<M-q>', '<cmd>q<CR>')
+
+vim.keymap.set('n', '<M-s>', '<cmd>vsplit<CR>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })

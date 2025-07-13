@@ -7,6 +7,7 @@ return {
   priority = 1000, -- High priority ensures the colorscheme loads before other plugins
   config = function()
     require('catppuccin').setup {
+      transparent_background = true, -- Enable transparent background
       integrations = {
         -- Enable integration with various plugins
         cmp = true,
