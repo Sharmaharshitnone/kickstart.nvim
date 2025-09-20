@@ -7,7 +7,59 @@ return {
   priority = 1000, -- High priority ensures the colorscheme loads before other plugins
   config = function()
     require('catppuccin').setup {
-      transparent_background = true, -- Enable transparent background
+      -- Note Harshit you can set them to false if you don't want them
+      transparent_background = true,
+       term_colors = true,
+        color_overrides = {
+          mocha = {
+            base = '#333333',      -- Main background
+            mantle = '#2a2a2a',    -- Darker background
+            crust = '#1e1e1e',     -- Darkest background
+            surface0 = '#404040',   -- Slightly lighter than base
+            surface1 = '#4a4a4a',   -- Even lighter
+            surface2 = '#555555',   -- Lightest surface
+          },
+        },
+             custom_highlights = function(colors)
+          return {
+            -- Main editor background
+            Normal = { bg = '#333333' },
+            NormalFloat = { bg = '#2a2a2a' },
+            
+            -- Line numbers with your custom colors
+            LineNr = { fg = '#5E81AC' },
+            CursorLineNr = { fg = '#C3B9E1', bold = true },
+            
+            -- Which-key styling
+            WhichKey = { fg = '#C3B9E1' },
+            WhichKeyDesc = { fg = '#88C0D0' },
+            WhichKeyGroup = { fg = '#81A1C1' },
+            WhichKeyFloat = { bg = '#2a2a2a' },
+            WhichKeyBorder = { fg = '#5E81AC', bg = '#2a2a2a' },
+            
+            -- Neo-tree styling
+            NeoTreeNormal = { bg = '#2a2a2a' },
+            NeoTreeNormalNC = { bg = '#2a2a2a' },
+            NeoTreeWinSeparator = { fg = '#5E81AC', bg = '#333333' },
+            
+            -- Telescope styling
+            TelescopeNormal = { bg = '#2a2a2a' },
+            TelescopeBorder = { fg = '#5E81AC', bg = '#2a2a2a' },
+            TelescopePromptNormal = { bg = '#404040' },
+            TelescopePromptBorder = { fg = '#5E81AC', bg = '#404040' },
+            TelescopeResultsNormal = { bg = '#2a2a2a' },
+            TelescopePreviewNormal = { bg = '#2a2a2a' },
+            
+            -- Status line
+            StatusLine = { bg = '#2a2a2a', fg = '#88C0D0' },
+            StatusLineNC = { bg = '#1e1e1e', fg = '#4C566A' },
+            
+            -- Completion menu
+            Pmenu = { bg = '#2a2a2a', fg = '#D8DEE9' },
+            PmenuSel = { bg = '#5E81AC', fg = '#2E3440' },
+            PmenuBorder = { fg = '#5E81AC', bg = '#2a2a2a' },
+          }
+        end,
       integrations = {
         -- Enable integration with various plugins
         cmp = true,

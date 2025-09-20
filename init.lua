@@ -84,6 +84,25 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+
+-- Better command line
+vim.opt.cmdheight = 1
+vim.opt.showcmd = true
+
+
+-- Better splits
+vim.opt.fillchars = {
+  vert = "│",
+  fold = "⠀",
+  eob = " ", -- suppress ~ at EndOfBuffer
+  diff = "⣿", -- alternatives = ⣿ ░ ─ ╱
+  msgsep = "‾",
+  foldopen = "▾",
+  foldsep = "│",
+  foldclose = "▸"
+}
+
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -113,12 +132,9 @@ vim.o.mouse = 'a'
 vim.o.showmode = false
 
 -- Sync clipboard between OS and Neovim.
---  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
-end)
+vim.o.clipboard = 'unnamedplus'
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -229,6 +245,48 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Automatically change working directory to current file's folder
+--  Uses window-local directory (lcd) to avoid interfering with other splits
+vim.api.nvim_create_autocmd('BufEnter', {
+  desc = 'Change working directory to current file folder (per-window)',
+  group = vim.api.nvim_create_augroup('kickstart-auto-lcd', { clear = true }),
+  callback = function()
+    local file_dir = vim.fn.expand('%:p:h')
+    local current_file = vim.fn.expand('%:p')
+    
+    -- Only change directory if we have a valid file path and it's not a special buffer
+    if file_dir ~= '' and vim.bo.buftype == '' and vim.fn.isdirectory(file_dir) == 1 then
+      -- Get the current working directory to check if we need to change
+      local current_wd = vim.fn.getcwd(0) -- Get window-local working directory
+      
+      -- Only change if the directory is actually different
+      if file_dir ~= current_wd then
+        vim.cmd.lcd(file_dir)
+        
+        -- Update Neo-tree to show the new directory structure
+        vim.schedule(function()
+          pcall(function()
+            local neo_tree_command = require('neo-tree.command')
+            local neo_tree_manager = require('neo-tree.sources.manager')
+            
+            -- Try multiple approaches to ensure Neo-tree updates
+            -- Approach 1: Set root directly
+            neo_tree_command.execute({ action = 'set_root', path = file_dir })
+            
+            -- Approach 2: Refresh the filesystem source
+            neo_tree_manager.refresh('filesystem')
+            
+            -- Approach 3: If Neo-tree is open, reveal the current file
+            if vim.g.neo_tree_loaded then
+              neo_tree_command.execute({ action = 'reveal', path = current_file })
+            end
+          end)
+        end)
+      end
+    end
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -246,7 +304,7 @@ rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
 --
---  To check the current status of your plugins, run
+--  To check the current???? status of your plugins, run
 --    :Lazy
 --
 --  You can press `?` in this menu for help. Use `:q` to close the window
@@ -315,6 +373,29 @@ require('lazy').setup({
       -- delay between pressing a key and opening which-key (milliseconds)
       -- this setting is independent of vim.o.timeoutlen
       delay = 0,
+      preset="modern",
+          win = {
+            no_overlap = true,
+            col = 200,
+            border = "none",
+            row = math.huge,
+            
+        -- border = "rounded",
+        -- position = "center",  -- Position on the left side
+        -- margin = { 1, 1, 1, 1 },
+        -- padding = { 1, 2, 1, 2 },
+        -- zindex = 1000,
+        width = { min = 20, max = 50 },
+        height = { min = 4, max = 25 },
+      },
+      layout = {
+        width = { min = 20, max = 50 },
+        margin = { 1, 1, 1, 1 },
+        padding = { 1, 2, 1, 2 },
+        -- position="left",
+        -- spacing = 3,
+        align = "top",
+      },
       icons = {
         -- set icon mappings to true if you have a Nerd Font
         mappings = vim.g.have_nerd_font,
@@ -356,12 +437,12 @@ require('lazy').setup({
           F12 = 'F12',
         },
       },
-      layout = {
-        align = 'center', -- Center align keys in the popup
-        height = { min = 4, max = 25 },
-        width = { min = 20, max = 50 },
-        spacing = 3,
-      },
+      -- layout = {
+      --   align = 'center', -- Center align keys in the popup
+      --   height = { min = 4, max = 25 },
+      --   width = { min = 20, max = 50 },
+      --   spacing = 3,
+      -- },
       -- Document existing key chains
       spec = {
         { '<leader>s', group = '[S]earch' },
@@ -442,6 +523,39 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+
+      -- NOTE: Change color from here
+
+      vim.api.nvim_set_hl(0, 'CursorLineNr', { fg = '#C3B9E1', bold = true })
+      vim.api.nvim_set_hl(0, 'LineNr', { fg = '#5E81AC' }) -- Add this line
+      vim.opt.cursorline = true
+
+
+      -- NOTE: Harshit You can undo the below by comments
+
+     -- Make core UI transparent where possible
+     local function set_transparent(hl)
+       pcall(vim.api.nvim_set_hl, 0, hl, { bg = 'none' })
+     end
+     set_transparent('Normal')
+     set_transparent('NormalFloat')
+     set_transparent('FloatBorder')
+     set_transparent('SignColumn')
+     set_transparent('Pmenu')
+     set_transparent('PmenuSel')
+     set_transparent('PmenuBorder')
+     set_transparent('TelescopeNormal')
+     set_transparent('TelescopeBorder')
+     set_transparent('TelescopePromptNormal')
+     set_transparent('TelescopePromptBorder')
+     set_transparent('TelescopeResultsNormal')
+     set_transparent('TelescopePreviewNormal')
+     set_transparent('NeoTreeNormal')
+     set_transparent('NeoTreeNormalNC')
+     set_transparent('WhichKeyFloat')
+     set_transparent('WhichKey')
+     set_transparent('WhichKeyBorder')
+     -- If a theme overrides after this, keep Catppuccin set to transparent (see catppuccin.lua)
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -525,7 +639,28 @@ require('lazy').setup({
       -- processes that communicate with some "client" - in this case, Neovim!
       --
       -- LSP provides Neovim with features like:
-      --  - Go to definition
+      --  - Go to defi
+  -- { -- You can easily change to a different colorscheme.
+  --   -- Change the name of the colorscheme plugin below, and then
+  --   -- change the command in the config to whatever the name of that colorscheme is.
+  --   --
+  --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+  --   'folke/tokyonight.nvim',
+  --   priority = 1000, -- Make sure to load this before all the other start plugins.
+  --   config = function()
+  --     ---@diagnostic disable-next-line: missing-fields
+  --     require('tokyonight').setup {
+  --       styles = {
+  --         comments = { italic = false }, -- Disable italics in comments
+  --       },
+  --     }
+  
+  --     -- Load the colorscheme here.
+  --     -- Like many other themes, this one has different styles, and you could load
+  --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+  --     vim.cmd.colorscheme 'tokyonight-night'
+  --   end,
+  -- },nition
       --  - Find references
       --  - Autocompletion
       --  - Symbol Search
@@ -668,6 +803,7 @@ require('lazy').setup({
               [vim.diagnostic.severity.WARN] = diagnostic.message,
               [vim.diagnostic.severity.INFO] = diagnostic.message,
               [vim.diagnostic.severity.HINT] = diagnostic.message,
+              initinit,
             }
             return diagnostic_message[diagnostic.severity]
           end,
@@ -735,6 +871,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'vale', -- Linter for prose (markdown, text)
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -854,7 +991,8 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        -- preset = 'default',
+          preset = 'super-tab',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -909,7 +1047,7 @@ require('lazy').setup({
   --         comments = { italic = false }, -- Disable italics in comments
   --       },
   --     }
-  --
+  
   --     -- Load the colorscheme here.
   --     -- Like many other themes, this one has different styles, and you could load
   --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.

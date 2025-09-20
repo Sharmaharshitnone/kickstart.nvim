@@ -4,6 +4,12 @@ return {
     'github/copilot.vim',
     lazy = true,
     event = { 'InsertEnter', 'CmdlineEnter' },
+    config = function()
+      -- disable copilot's default Tab mapping
+      vim.g.copilot_no_tab_map = true
+      -- Map Tab: when popup menu visible, use completion next; otherwise accept Copilot suggestion
+      vim.api.nvim_set_keymap('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : copilot#Accept("\\<CR>")', { expr = true, noremap = true, silent = true })
+    end,
   },
 
   -- Copilot Chat plugin
@@ -15,13 +21,13 @@ return {
     },
     build = 'make tiktoken', -- Only needed on MacOS or Linux
     opts = {
-      model = 'gpt-4.1',
+      model = 'gpt-5-mini',
       --[[     model = 'claude-3.7-sonnet-thought', ]]
       -- Configuration for the chat window
       window = {
-        layout = 'float',
-        relative = 'editor',
-        width = 0.6,
+        layout = 'vertical', -- Change to vertical split for side window
+        position = 'right', -- Position on the right side (change to 'left' for left side)
+        width = 40, -- Fixed width in characters (adjust as needed)
         height = 0.8,
         border = 'rounded',
         title = 'Copilot Chat',

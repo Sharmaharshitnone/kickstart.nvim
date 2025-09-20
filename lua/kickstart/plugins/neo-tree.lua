@@ -71,6 +71,7 @@ return {
         enabled = true, -- Neo-tree will automatically follow the current file
         leave_dirs_open = false,
       },
+      use_libuv_file_watcher = true, -- Enable file watcher for automatic updates
       group_empty_dirs = true, -- Group empty directories when sorting
       hijack_netrw_behavior = "open_current", -- Or "open_default", "disabled"
     },
