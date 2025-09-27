@@ -1,107 +1,28 @@
 --[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
+    1. Read : https://learnxinyminutes.com/docs/lua/
+    2. :help lua-guide (or HTML version): https://neovim.io/doc/user/lua-guide.html
+    3. :Tutor
+    4. READ `:help`.
+    5. "<space>sh" to [s]earch the [h]elp documentation,
+    6. `:help X` comments throughout the init.lua
+    7. If  experience any errors run `:checkhealth` for more info.
 --]]
-
 
 -- Better command line
 vim.opt.cmdheight = 1
 vim.opt.showcmd = true
 
-
 -- Better splits
 vim.opt.fillchars = {
-  vert = "│",
-  fold = "⠀",
-  eob = " ", -- suppress ~ at EndOfBuffer
-  diff = "⣿", -- alternatives = ⣿ ░ ─ ╱
-  msgsep = "‾",
-  foldopen = "▾",
-  foldsep = "│",
-  foldclose = "▸"
+  vert = '│',
+  fold = '⠀',
+  eob = ' ', -- suppress ~ at EndOfBuffer
+  diff = '⣿', -- alternatives = ⣿ ░ ─ ╱
+  msgsep = '‾',
+  foldopen = '▾',
+  foldsep = '│',
+  foldclose = '▸',
 }
-
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -109,7 +30,6 @@ vim.opt.fillchars = {
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.opt.relativenumber = true
--- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
 -- For init.lua
@@ -251,34 +171,34 @@ vim.api.nvim_create_autocmd('BufEnter', {
   desc = 'Change working directory to current file folder (per-window)',
   group = vim.api.nvim_create_augroup('kickstart-auto-lcd', { clear = true }),
   callback = function()
-    local file_dir = vim.fn.expand('%:p:h')
-    local current_file = vim.fn.expand('%:p')
-    
+    local file_dir = vim.fn.expand '%:p:h'
+    local current_file = vim.fn.expand '%:p'
+
     -- Only change directory if we have a valid file path and it's not a special buffer
     if file_dir ~= '' and vim.bo.buftype == '' and vim.fn.isdirectory(file_dir) == 1 then
       -- Get the current working directory to check if we need to change
       local current_wd = vim.fn.getcwd(0) -- Get window-local working directory
-      
+
       -- Only change if the directory is actually different
       if file_dir ~= current_wd then
         vim.cmd.lcd(file_dir)
-        
+
         -- Update Neo-tree to show the new directory structure
         vim.schedule(function()
           pcall(function()
-            local neo_tree_command = require('neo-tree.command')
-            local neo_tree_manager = require('neo-tree.sources.manager')
-            
+            local neo_tree_command = require 'neo-tree.command'
+            local neo_tree_manager = require 'neo-tree.sources.manager'
+
             -- Try multiple approaches to ensure Neo-tree updates
             -- Approach 1: Set root directly
-            neo_tree_command.execute({ action = 'set_root', path = file_dir })
-            
+            neo_tree_command.execute { action = 'set_root', path = file_dir }
+
             -- Approach 2: Refresh the filesystem source
-            neo_tree_manager.refresh('filesystem')
-            
+            neo_tree_manager.refresh 'filesystem'
+
             -- Approach 3: If Neo-tree is open, reveal the current file
             if vim.g.neo_tree_loaded then
-              neo_tree_command.execute({ action = 'reveal', path = current_file })
+              neo_tree_command.execute { action = 'reveal', path = current_file }
             end
           end)
         end)
@@ -373,13 +293,13 @@ require('lazy').setup({
       -- delay between pressing a key and opening which-key (milliseconds)
       -- this setting is independent of vim.o.timeoutlen
       delay = 0,
-      preset="modern",
-          win = {
-            no_overlap = true,
-            col = 200,
-            border = "none",
-            row = math.huge,
-            
+      preset = 'modern',
+      win = {
+        no_overlap = true,
+        col = 200,
+        border = 'none',
+        row = math.huge,
+
         -- border = "rounded",
         -- position = "center",  -- Position on the left side
         -- margin = { 1, 1, 1, 1 },
@@ -394,7 +314,7 @@ require('lazy').setup({
         padding = { 1, 2, 1, 2 },
         -- position="left",
         -- spacing = 3,
-        align = "top",
+        align = 'top',
       },
       icons = {
         -- set icon mappings to true if you have a Nerd Font
@@ -530,32 +450,31 @@ require('lazy').setup({
       vim.api.nvim_set_hl(0, 'LineNr', { fg = '#5E81AC' }) -- Add this line
       vim.opt.cursorline = true
 
-
       -- NOTE: Harshit You can undo the below by comments
 
-     -- Make core UI transparent where possible
-     local function set_transparent(hl)
-       pcall(vim.api.nvim_set_hl, 0, hl, { bg = 'none' })
-     end
-     set_transparent('Normal')
-     set_transparent('NormalFloat')
-     set_transparent('FloatBorder')
-     set_transparent('SignColumn')
-     set_transparent('Pmenu')
-     set_transparent('PmenuSel')
-     set_transparent('PmenuBorder')
-     set_transparent('TelescopeNormal')
-     set_transparent('TelescopeBorder')
-     set_transparent('TelescopePromptNormal')
-     set_transparent('TelescopePromptBorder')
-     set_transparent('TelescopeResultsNormal')
-     set_transparent('TelescopePreviewNormal')
-     set_transparent('NeoTreeNormal')
-     set_transparent('NeoTreeNormalNC')
-     set_transparent('WhichKeyFloat')
-     set_transparent('WhichKey')
-     set_transparent('WhichKeyBorder')
-     -- If a theme overrides after this, keep Catppuccin set to transparent (see catppuccin.lua)
+      -- Make core UI transparent where possible
+      local function set_transparent(hl)
+        pcall(vim.api.nvim_set_hl, 0, hl, { bg = 'none' })
+      end
+      set_transparent 'Normal'
+      set_transparent 'NormalFloat'
+      set_transparent 'FloatBorder'
+      set_transparent 'SignColumn'
+      set_transparent 'Pmenu'
+      set_transparent 'PmenuSel'
+      set_transparent 'PmenuBorder'
+      set_transparent 'TelescopeNormal'
+      set_transparent 'TelescopeBorder'
+      set_transparent 'TelescopePromptNormal'
+      set_transparent 'TelescopePromptBorder'
+      set_transparent 'TelescopeResultsNormal'
+      set_transparent 'TelescopePreviewNormal'
+      set_transparent 'NeoTreeNormal'
+      set_transparent 'NeoTreeNormalNC'
+      set_transparent 'WhichKeyFloat'
+      set_transparent 'WhichKey'
+      set_transparent 'WhichKeyBorder'
+      -- If a theme overrides after this, keep Catppuccin set to transparent (see catppuccin.lua)
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -640,27 +559,27 @@ require('lazy').setup({
       --
       -- LSP provides Neovim with features like:
       --  - Go to defi
-  -- { -- You can easily change to a different colorscheme.
-  --   -- Change the name of the colorscheme plugin below, and then
-  --   -- change the command in the config to whatever the name of that colorscheme is.
-  --   --
-  --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  --   'folke/tokyonight.nvim',
-  --   priority = 1000, -- Make sure to load this before all the other start plugins.
-  --   config = function()
-  --     ---@diagnostic disable-next-line: missing-fields
-  --     require('tokyonight').setup {
-  --       styles = {
-  --         comments = { italic = false }, -- Disable italics in comments
-  --       },
-  --     }
-  
-  --     -- Load the colorscheme here.
-  --     -- Like many other themes, this one has different styles, and you could load
-  --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  --     vim.cmd.colorscheme 'tokyonight-night'
-  --   end,
-  -- },nition
+      -- { -- You can easily change to a different colorscheme.
+      --   -- Change the name of the colorscheme plugin below, and then
+      --   -- change the command in the config to whatever the name of that colorscheme is.
+      --   --
+      --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+      --   'folke/tokyonight.nvim',
+      --   priority = 1000, -- Make sure to load this before all the other start plugins.
+      --   config = function()
+      --     ---@diagnostic disable-next-line: missing-fields
+      --     require('tokyonight').setup {
+      --       styles = {
+      --         comments = { italic = false }, -- Disable italics in comments
+      --       },
+      --     }
+
+      --     -- Load the colorscheme here.
+      --     -- Like many other themes, this one has different styles, and you could load
+      --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+      --     vim.cmd.colorscheme 'tokyonight-night'
+      --   end,
+      -- },nition
       --  - Find references
       --  - Autocompletion
       --  - Symbol Search
@@ -992,7 +911,7 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         -- preset = 'default',
-          preset = 'super-tab',
+        preset = 'super-tab',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1047,7 +966,7 @@ require('lazy').setup({
   --         comments = { italic = false }, -- Disable italics in comments
   --       },
   --     }
-  
+
   --     -- Load the colorscheme here.
   --     -- Like many other themes, this one has different styles, and you could load
   --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
