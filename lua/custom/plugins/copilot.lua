@@ -27,8 +27,8 @@ return {
       window = {
         layout = 'vertical', -- Change to vertical split for side window
         position = 'right', -- Position on the right side (change to 'left' for left side)
-        width = 40, -- Fixed width in characters (adjust as needed)
-        height = 0.8,
+        -- width = 40, -- Fixed width in characters (adjust as needed)
+        -- height = 0.8,
         border = 'rounded',
         title = 'Copilot Chat',
       },
