@@ -1,16 +1,17 @@
+-- Resolve jdtls path before config
+local jdtls_path
+local ok_registry, registry = pcall(require, 'mason-registry')
+if ok_registry and registry.is_installed('jdtls') then
+  jdtls_path = registry.get_package('jdtls'):get_install_path() .. '/bin/jdtls'
+else
+  jdtls_path = vim.fn.stdpath('data') .. '/mason/bin/jdtls'
+end
+
 local config = {
   name = 'jdtls',
 
-  -- `cmd` defines the executable to launch eclipse.jdt.ls.
-  -- Use Mason registry to get the correct path dynamically
-  cmd = function()
-    local ok_registry, registry = pcall(require, 'mason-registry')
-    if ok_registry and registry.is_installed('jdtls') then
-      return { registry.get_package('jdtls'):get_install_path() .. '/bin/jdtls' }
-    end
-    -- Fallback to standard Mason path
-    return { vim.fn.stdpath('data') .. '/mason/bin/jdtls' }
-  end,
+  -- `cmd` must be a table of strings, not a function
+  cmd = { jdtls_path },
 
   -- `root_dir` must point to the root of your project.
   -- See `:help vim.fs.root`

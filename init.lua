@@ -533,28 +533,7 @@ require('lazy').setup({
       -- processes that communicate with some "client" - in this case, Neovim!
       --
       -- LSP provides Neovim with features like:
-      --  - Go to defi
-      -- { -- You can easily change to a different colorscheme.
-      --   -- Change the name of the colorscheme plugin below, and then
-      --   -- change the command in the config to whatever the name of that colorscheme is.
-      --   --
-      --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-      --   'folke/tokyonight.nvim',
-      --   priority = 1000, -- Make sure to load this before all the other start plugins.
-      --   config = function()
-      --     ---@diagnostic disable-next-line: missing-fields
-      --     require('tokyonight').setup {
-      --       styles = {
-      --         comments = { italic = false }, -- Disable italics in comments
-      --       },
-      --     }
-
-      --     -- Load the colorscheme here.
-      --     -- Like many other themes, this one has different styles, and you could load
-      --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      --     vim.cmd.colorscheme 'tokyonight-night'
-      --   end,
-      -- },nition
+      --  - Go to definition
       --  - Find references
       --  - Autocompletion
       --  - Symbol Search
@@ -692,14 +671,7 @@ require('lazy').setup({
           source = 'if_many',
           spacing = 2,
           format = function(diagnostic)
-            local diagnostic_message = {
-              [vim.diagnostic.severity.ERROR] = diagnostic.message,
-              [vim.diagnostic.severity.WARN] = diagnostic.message,
-              [vim.diagnostic.severity.INFO] = diagnostic.message,
-              [vim.diagnostic.severity.HINT] = diagnostic.message,
-              initinit,
-            }
-            return diagnostic_message[diagnostic.severity]
+            return diagnostic.message
           end,
         },
       }
@@ -786,46 +758,8 @@ require('lazy').setup({
     end,
   },
 
-  { -- Autoformat
-    'stevearc/conform.nvim',
-    event = { 'BufWritePre' },
-    cmd = { 'ConformInfo' },
-    keys = {
-      {
-        '<leader>f',
-        function()
-          require('conform').format { async = true, lsp_format = 'fallback' }
-        end,
-        mode = '',
-        desc = '[F]ormat buffer',
-      },
-    },
-    opts = {
-      notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-        if disable_filetypes[vim.bo[bufnr].filetype] then
-          return nil
-        else
-          return {
-            timeout_ms = 500,
-            lsp_format = 'fallback',
-          }
-        end
-      end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
-      },
-    },
-  },
+  -- NOTE: conform.nvim configuration moved to lua/custom/plugins/conform.lua
+  --       for CP-specific clang-format settings
 
   { -- Autocompletion
     'saghen/blink.cmp',
@@ -885,8 +819,8 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        -- preset = 'default',
-        preset = 'super-tab',
+        -- NOTE: Using 'default' preset to avoid conflict with Copilot Tab mapping
+        preset = 'default',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
