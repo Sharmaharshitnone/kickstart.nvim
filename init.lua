@@ -11,7 +11,7 @@
 -- Better command line
 vim.opt.cmdheight = 1
 vim.opt.showcmd = true
-
+vim.opt.clipboard = 'unnamedplus'
 -- Better splits
 vim.opt.fillchars = {
   vert = '│',
@@ -54,7 +54,6 @@ vim.o.showmode = false
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.o.clipboard = 'unnamedplus'
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -137,13 +136,8 @@ vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
+--  vim-tmux-navigator plugin handles <C-hjkl> for seamless tmux/vim navigation
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -172,36 +166,17 @@ vim.api.nvim_create_autocmd('BufEnter', {
   group = vim.api.nvim_create_augroup('kickstart-auto-lcd', { clear = true }),
   callback = function()
     local file_dir = vim.fn.expand '%:p:h'
-    local current_file = vim.fn.expand '%:p'
 
-    -- Only change directory if we have a valid file path and it's not a special buffer
-    if file_dir ~= '' and vim.bo.buftype == '' and vim.fn.isdirectory(file_dir) == 1 then
-      -- Get the current working directory to check if we need to change
-      local current_wd = vim.fn.getcwd(0) -- Get window-local working directory
+    -- Skip for special buffers (terminals, help, Neo-tree, etc.)
+    if vim.bo.buftype ~= '' or file_dir == '' then
+      return
+    end
 
-      -- Only change if the directory is actually different
+    -- Only change directory if we have a valid file path and it's a real directory
+    if vim.fn.isdirectory(file_dir) == 1 then
+      local current_wd = vim.fn.getcwd(0)
       if file_dir ~= current_wd then
         vim.cmd.lcd(file_dir)
-
-        -- Update Neo-tree to show the new directory structure
-        vim.schedule(function()
-          pcall(function()
-            local neo_tree_command = require 'neo-tree.command'
-            local neo_tree_manager = require 'neo-tree.sources.manager'
-
-            -- Try multiple approaches to ensure Neo-tree updates
-            -- Approach 1: Set root directly
-            neo_tree_command.execute { action = 'set_root', path = file_dir }
-
-            -- Approach 2: Refresh the filesystem source
-            neo_tree_manager.refresh 'filesystem'
-
-            -- Approach 3: If Neo-tree is open, reveal the current file
-            if vim.g.neo_tree_loaded then
-              neo_tree_command.execute { action = 'reveal', path = current_file }
-            end
-          end)
-        end)
       end
     end
   end,
@@ -224,7 +199,7 @@ rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
 --
---  To check the current???? status of your plugins, run
+--  To check the current status of your plugins, run
 --    :Lazy
 --
 --  You can press `?` in this menu for help. Use `:q` to close the window
@@ -1020,7 +995,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'java' },
+      ensure_installed = { 'bash', 'c', 'cpp', 'rust', 'python', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'java', 'go', 'typescript' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {

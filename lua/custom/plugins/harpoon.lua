@@ -4,7 +4,6 @@ local vim = vim
 return {
   'ThePrimeagen/harpoon',
   branch = 'harpoon2',
-  lazy = false,
   dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim' },
   config = function()
     -- Require Harpoon
@@ -41,62 +40,66 @@ return {
       }):find()
     end
     
-    -- Navigation through harpoon marks
-    vim.keymap.set('n', '<C-S-P>', function()
+    -- Navigation through harpoon marks (bracket style, terminal-compatible)
+    vim.keymap.set('n', '[h', function()
       harpoon:list():prev()
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Previous mark' })
     
-    vim.keymap.set('n', '<C-S-N>', function()
+    vim.keymap.set('n', ']h', function()
       harpoon:list():next()
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Next mark' })
     
-    -- Jump to specific marks (1-4)
+    -- Jump to specific marks (1-9)
     vim.keymap.set('n', '<M-1>', function()
       harpoon:list():select(1)
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Mark 1' })
     
     vim.keymap.set('n', '<M-2>', function()
       harpoon:list():select(2)
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Mark 2' })
     
     vim.keymap.set('n', '<M-3>', function()
       harpoon:list():select(3)
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Mark 3' })
     
     vim.keymap.set('n', '<M-4>', function()
       harpoon:list():select(4)
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Mark 4' })
+    
     vim.keymap.set('n', '<M-5>', function()
       harpoon:list():select(5)
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Mark 5' })
+    
     vim.keymap.set('n', '<M-6>', function()
       harpoon:list():select(6)
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Mark 6' })
+    
     vim.keymap.set('n', '<M-7>', function()
       harpoon:list():select(7)
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Mark 7' })
+    
     vim.keymap.set('n', '<M-8>', function()
       harpoon:list():select(8)
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Mark 8' })
+    
     vim.keymap.set('n', '<M-9>', function()
       harpoon:list():select(9)
-    end, { silent = true, noremap = true })
+    end, { silent = true, noremap = true, desc = 'Harpoon: Mark 9' })
 
     
     -- Add mark at current file
     vim.keymap.set('n', '<A-h>a', function()
       harpoon:list():add()
-    end, { desc = 'Add to harpoon' })
-    
+    end, { desc = 'Harpoon: Add mark' })
     
     -- Open Telescope view 
     vim.keymap.set('n', '<A-h>e', function()
       toggle_telescope()
-    end, { desc = 'open telescope' })
+    end, { desc = 'Harpoon: Telescope view' })
     
     -- Open Harpoon's native quick menu
     vim.keymap.set('n', '<A-h>m', function()
       harpoon.ui:toggle_quick_menu(harpoon:list())
-    end, { desc = 'harpoon manager' })
+    end, { desc = 'Harpoon: Quick menu' })
   end
 }

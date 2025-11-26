@@ -2,12 +2,15 @@ local config = {
   name = 'jdtls',
 
   -- `cmd` defines the executable to launch eclipse.jdt.ls.
-  -- `jdtls` must be available in $PATH and you must have Python3.9 for this to work.
-  --
-  -- As alternative you could also avoid the `jdtls` wrapper and launch
-  -- eclipse.jdt.ls via the `java` executable
-  -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
-  cmd = { vim.fn.expand('~/.local/share/nvim/mason/bin/jdtls') },
+  -- Use Mason registry to get the correct path dynamically
+  cmd = function()
+    local ok_registry, registry = pcall(require, 'mason-registry')
+    if ok_registry and registry.is_installed('jdtls') then
+      return { registry.get_package('jdtls'):get_install_path() .. '/bin/jdtls' }
+    end
+    -- Fallback to standard Mason path
+    return { vim.fn.stdpath('data') .. '/mason/bin/jdtls' }
+  end,
 
   -- `root_dir` must point to the root of your project.
   -- See `:help vim.fs.root`

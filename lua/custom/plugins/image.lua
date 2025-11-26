@@ -1,8 +1,8 @@
 return {
   {
     '3rd/image.nvim',
-    enabled = true, -- ensure it's not disabled
-    lazy = false, -- load at startup
+    enabled = true,
+    ft = { 'markdown', 'neorg' }, -- Lazy-load on markdown/neorg files
     dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
       local is_kitty = vim.env.KITTY_WINDOW_ID ~= nil
