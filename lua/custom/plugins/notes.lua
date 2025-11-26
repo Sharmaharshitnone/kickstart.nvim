@@ -1,55 +1,56 @@
 return {
   {
-    vim.keymap.set('n', '<leader>ns', function()
-      require('telescope.builtin').find_files {
-        cwd = vim.fn.expand '~/notes',
-      }
-    end, { desc = 'Notes Search' }),
+    'nvim-lua/plenary.nvim', -- Dummy dependency for notes keymaps
+    config = function()
+      -- Notes keymaps
+      vim.keymap.set('n', '<leader>ns', function()
+        require('telescope.builtin').find_files {
+          cwd = vim.fn.expand '~/notes',
+        }
+      end, { desc = 'Notes: Search' })
+
+      vim.keymap.set('n', '<leader>npn', function()
+        vim.ui.input({ prompt = 'New Project Note Name: ' }, function(name)
+          if name and name ~= '' then
+            vim.cmd('edit ~/notes/project/' .. name .. '.md')
+          end
+        end)
+      end, { desc = 'Notes: New Project' })
+
+      vim.keymap.set('n', '<leader>nwn', function()
+        vim.ui.input({ prompt = 'New Work Note Name: ' }, function(name)
+          if name and name ~= '' then
+            vim.cmd('edit ~/notes/work/' .. name .. '.md')
+          end
+        end)
+      end, { desc = 'Notes: New Work' })
+
+      vim.keymap.set('n', '<leader>nwp', function()
+        vim.ui.input({ prompt = 'New Personal Note Name: ' }, function(name)
+          if name and name ~= '' then
+            vim.cmd('edit ~/notes/personal/' .. name .. '.md')
+          end
+        end)
+      end, { desc = 'Notes: New Personal' })
+
+      vim.keymap.set('n', '<leader>nwd', function()
+        local date = os.date '%Y-%m-%d'
+        vim.cmd('edit ~/notes/daily/' .. date .. '.md')
+      end, { desc = 'Notes: Work Daily' })
+
+      vim.keymap.set('n', '<leader>ngd', function()
+        local date = os.date '%Y-%m-%d'
+        vim.cmd('edit ~/gdrive/Notes/daily/' .. date .. '.md')
+      end, { desc = 'Notes: GDrive Daily' })
+
+      vim.keymap.set('n', '<leader>nbc', function()
+        vim.cmd('edit ~/bot/cp_journey/progress_log.md')
+      end, { desc = 'Notes: CP Journey Log' })
+
+      vim.keymap.set('n', '<leader>nd', function()
+        local date = os.date '%Y-%m-%d'
+        vim.cmd('edit ~/notes/personal/daily/' .. date .. '.md')
+      end, { desc = 'Notes: Personal Daily' })
+    end,
   },
-  vim.keymap.set('n', '<leader>npn', function()
-    -- Prompt the user for input
-    vim.ui.input({ prompt = 'New Project Note Name: ' }, function(name)
-      -- Check if the user entered a name and didn't cancel
-      if name and name ~= '' then
-        -- Construct the full path
-        local path = '~/notes/project/' .. name .. '.md'
-        -- Execute the edit command
-        vim.cmd('edit ' .. path)
-      end
-    end)
-  end, { desc = '[N]ew [P]roject [N]ote' }),
-  vim.keymap.set('n', '<leader>nwn', function()
-    -- Prompt the user for input
-    vim.ui.input({ prompt = 'New work Note Name: ' }, function(name)
-      -- Check if the user entered a name and didn't cancel
-      if name and name ~= '' then
-        -- Construct the full path
-        local path = '~/notes/work/' .. name .. '.md'
-        -- Execute the edit command
-        vim.cmd('edit ' .. path)
-      end
-    end)
-  end, { desc = '[N]ew [W]ork [N]ote' }),
-
-  vim.keymap.set('n', '<leader>nwp', function()
-    -- Prompt the user for input
-    vim.ui.input({ prompt = 'New Personal Note Name: ' }, function(name)
-      -- Check if the user entered a name and didn't cancel
-      if name and name ~= '' then
-        -- Construct the full path
-        local path = '~/notes/personal/' .. name .. '.md'
-        -- Execute the edit command
-        vim.cmd('edit ' .. path)
-      end
-    end)
-  end, { desc = '[N]ew [P]ersonal [N]ote' }),
-
-  vim.keymap.set('n', '<leader>nwd', function()
-    -- Get today's date in YYYY-MM-DD format
-    local date = os.date '%Y-%m-%d'
-    -- Construct the full path
-    local path = '~/notes/daily/' .. date .. '.md'
-    -- Open the daily note
-    vim.cmd('edit ' .. path)
-  end, { desc = '[N]ew [W]ork [D]aily note' }),
 }

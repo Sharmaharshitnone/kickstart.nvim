@@ -29,10 +29,9 @@ return {
     require('mason-nvim-dap').setup {
       automatic_installation = true,
       handlers = {},
-      -- Ensure both Go and C++ debuggers are installed
+      -- NOTE: C++ debugger (codelldb) configured in lua/custom/plugins/dap-cpp.lua
       ensure_installed = {
-        'delve',    -- For Go
-        'cpptools', -- For C++
+        'delve', -- For Go
       },
     }
 
@@ -60,43 +59,11 @@ return {
 
     -- ### 3. LANGUAGE-SPECIFIC CONFIGURATIONS ###
 
-    -- GO Configuration (your existing setup)
+    -- GO Configuration
     require('dap-go').setup()
 
-    -- C++ ADAPTER Configuration
-    -- This tells dap how to launch the cpptools debug server
-    dap.adapters.cppdbg = {
-      id = "cppdbg",
-      type = "executable",
-      command = vim.fn.stdpath("data") .. "/mason/bin/OpenDebugAD7",
-      options = {
-        detached = false,
-      },
-    }
-
-    -- C++ LAUNCH Configuration
-    -- This defines a template for launching and debugging a C++ file
-    dap.configurations.cpp = {
-      {
-        name = "Launch file",
-        type = "cppdbg", -- Must match the adapter name from above
-        request = "launch",
-        program = function()
-          return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
-        end,
-        cwd = "${workspaceFolder}",
-        stopAtEntry = true,
-        setupCommands = {
-          {
-            text = '-enable-pretty-printing',
-            description = 'enable pretty printing',
-            ignoreFailures = false
-          },
-        },
-      },
-    }
-    -- Use the same configuration for C files
-    dap.configurations.c = dap.configurations.cpp
+    -- NOTE: C++ debugger configuration moved to lua/custom/plugins/dap-cpp.lua
+    --       Using codelldb instead of cpptools for better performance
 
   end,
 }

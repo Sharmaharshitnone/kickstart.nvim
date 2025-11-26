@@ -8,7 +8,12 @@ return {
     'MunifTanjim/nui.nvim',
   },
   opts = {
-    -- configuration goes here
+    lang = 'cpp',
+    cn = { enabled = false },
+    storage = {
+      home = vim.fn.expand('~/work/language/Cpp/leetcode'),
+      cache = vim.fn.stdpath('cache') .. '/leetcode',
+    },
   },
 }
 
